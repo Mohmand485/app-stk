@@ -56,6 +56,7 @@ th:first-child,td:first-child{text-align:left}
 .note{font-size:12px;color:var(--text-muted);margin-top:8px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 @media (max-width:760px){.grid2{grid-template-columns:1fr}}
+@media (max-width:520px){section{padding:14px 12px}.card{padding:12px 10px}.viz-root{padding:14px 10px 40px}}
 .mg{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media (max-width:760px){.mg{grid-template-columns:1fr}}
 .chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:999px;padding:4px 6px 4px 10px;margin:3px 4px 3px 0;font-size:13px;background:var(--surface-1)}
 .chip button{border:none;background:var(--grid);color:var(--text-secondary);border-radius:999px;width:22px;height:22px;cursor:pointer;font-size:14px;line-height:1}
@@ -396,15 +397,15 @@ function renderFC(){const el=$('#fc');if(!el)return;
   el.innerHTML=`<h2>Next day · week · month</h2>
   <div class="sub">How often this stock rose after <b>similar setups</b> in its own history since 2019, the typical range, live money flow and analyst views. <b>No one can reliably predict short-term prices</b>: the "hit rate" shows how often this method called the direction right over the past year (50% = no better than a coin flip).</div>
   <div class="cards wide">${D.stocks.map(s=>{const f=s.forecast,fl=s.flow,an=s.analyst;
-    const rows=f.rows.map(r=>`<tr><td>${r.label}</td><td>${r.p_up==null?'—':upct(r.p_up)} <span class="muted" style="font-size:11px">(${r.n}${r.conditional?'':' all'})</span></td><td>${cp(r.lo,0)} … ${cp(r.hi,0)}</td><td><b class="${r.lean==='Lean up'?'up':r.lean==='Lean down'?'down':''}">${r.lean}</b></td><td>${r.acc==null?'—':upct(r.acc)}</td></tr>`).join('');
+    const rows=f.rows.map(r=>`<tr><td>${r.label}<div style="font-size:11px">${cp(r.lo,0)} … ${cp(r.hi,0)}</div></td><td>${r.p_up==null?'—':upct(r.p_up)} <span class="muted" style="font-size:11px">(${r.n}${r.conditional?'':' all'})</span></td><td><b class="${r.lean==='Lean up'?'up':r.lean==='Lean down'?'down':''}">${r.lean}</b></td><td>${r.acc==null?'—':upct(r.acc)}</td></tr>`).join('');
     const pe=an&&an.eps.find(e=>e.mark==='E');
     return `<div class="card"><div class="nm">${escH(s.name)} <span class="muted" style="font-weight:400">${escH(codeOf(s.code))}</span></div>
       <div class="sub" style="margin:4px 0 6px">Now: ${escH(f.setup)}</div>
-      <div class="tbl" style="margin-top:0"><table><tr><th>Horizon</th><th>Rose before*</th><th>Range 5–95%</th><th>Lean</th><th>Hit rate</th></tr>${rows}</table></div>
+      <div class="tbl" style="margin-top:0"><table><tr><th>Horizon &amp; range†</th><th>Rose before*</th><th>Lean</th><th>Hit rate</th></tr>${rows}</table></div>
       ${fl?`<div class="sub" style="margin-top:8px"><b>Main-fund flow</b> (主力净流入): today <span class="${sgnCls(fl.d1)}">${fmtYi(fl.d1)}</span> · 5 days <span class="${sgnCls(fl.d5)}">${fmtYi(fl.d5)}</span> · 20 days <span class="${sgnCls(fl.d20)}">${fmtYi(fl.d20)}</span></div>`:''}
       ${an&&an.orgs?`<div class="sub" style="margin-top:4px"><b>Analysts</b> (${an.orgs} firms): ${an.buy} buy · ${an.add} add · ${an.neutral} neutral · ${an.reduce+an.sell} reduce/sell${pe&&pe.eps>0?` · ${pe.year}E EPS ${pe.eps.toFixed(2)} → forward PE ${(s.current.close/pe.eps).toFixed(1)}`:''}</div>`:s.market==='A'?'<div class="sub muted" style="margin-top:4px">No analyst coverage found.</div>':''}
     </div>`}).join('')}</div>
-  <div class="note">*How often it rose after the same setup: same position vs MA20/MA60 and same RSI band. Ranges are resampled from the last ~2 years of daily moves. Money flow and analyst data are A-shares only (Eastmoney). Not a forecast and not advice.</div>`}
+  <div class="note">*How often it rose after the same setup: same position vs MA20/MA60 and same RSI band. †Range = 5th–95th percentile of outcomes, resampled from the last ~2 years of daily moves. Money flow and analyst data are A-shares only (Eastmoney). Not a forecast and not advice.</div>`}
 
 let LMsel=0;
 function renderLM(){const el=$('#lm');if(!el)return;
